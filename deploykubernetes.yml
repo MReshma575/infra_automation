@@ -1,0 +1,9 @@
+---
+- name: Print a message example
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Display a custom greeting
+      ansible.builtin.debug:
+        msg: "Hello, World! This is a printed message."
+
