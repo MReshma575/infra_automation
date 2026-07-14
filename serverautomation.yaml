@@ -1,23 +1,12 @@
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: my-app-deployment
-  labels:
-    app: my-web-app
-spec:
-  replicas: 5
-  selector:
-    matchLabels:
-      app: my-web-app
-  template:
-    metadata:
-      labels:
-        app: my-web-app
-    spec:
-      containers:
-      - name: web-container
-        image: nginx:latest # Replace with your container image
-        ports:
-        - containerPort: 80
+name: Print Message Workflow
+on: [push]
+
+jobs:
+  print-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print something
+        run: echo "Hello, World!"
+
         
 
