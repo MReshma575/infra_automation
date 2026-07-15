@@ -1,23 +1,18 @@
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: my-app-deployment
-  labels:
-    app: my-web-app
-spec:
-  replicas: 5
-  selector:
-    matchLabels:
-      app: my-web-app
-  template:
-    metadata:
-      labels:
-        app: my-web-app
-    spec:
-      containers:
-      - name: web-container
-        image: nginx:latest # Replace with your container image
-        ports:
-        - containerPort: 80
-        
+---
+- name: Print Message Workflow
+  hosts: localhost
+  connection: local
+  gather_facts: false
 
+  tasks:
+    - name: Print Hello World
+      debug:
+        msg: "Hello, World! Jenkins executed this Ansible playbook successfully."
+
+    - name: Print current date
+      command: date
+      register: current_date
+
+    - name: Display current date
+      debug:
+        var: current_date.stdout
