@@ -1,0 +1,43 @@
+---
+- name: Setup Local Kubernetes on MacBook Pro
+  hosts: localhost
+  connection: local
+  gather_facts: yes
+  become: yes # Sometimes needed for Homebrew taps or network settings, though usually optional for local brew
+
+  tasks:
+    - name: Ensure Homebrew is installed
+      ansible.builtin.shell: |
+        command -v brew >/dev/null 2>&1 || \
+        /bin/bash -c "$(curl -fsSL https://githubusercontent.com)"
+      args:
+        creates: /opt/homebrew/bin/brew
+
+    - name: Ensure Xcode Command Line Tools are present
+      ansible.builtin.command: xcode-select --install
+      ignore_errors: yes
+
+    - name: Install required Kubernetes packages via Homebrew
+      community.general.homebrew:
+        name:
+          - kubectl
+          - minikube
+        state: present
+        update_cache: yes
+
+    - name: Start Minikube cluster using Docker driver
+      ansible.builtin.shell: |
+        minikube config set driver docker
+        minikube start --cpus=4 --memory=8192
+      register: minikube_start
+      changed_when: "'exists' not in minikube_start.stdout and 'already running' not in minikube_start.stdout"
+
+    - name: Verify Minikube status
+      ansible.builtin.command: minikube status
+      register: minikube_status
+      changed_when: false
+
+    - name: Show cluster status
+      ansible.builtin.debug:
+        var: minikube_status.stdout_lines
+
